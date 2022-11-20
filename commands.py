@@ -10,7 +10,7 @@ async def start(message: types.Message):
     player = message.from_user
     model.set_player(player)
     await view.hello(message)
-    await asyncio.sleep(10)
+    await asyncio.sleep(15)
     dp.register_message_handler(player_turn)
     first_turn = random.randint(0,1)    
     if first_turn:
@@ -31,7 +31,7 @@ async def player_turn(message: types.Message):
             await bot.send_message(player.id, f'{player.first_name} взял {player_take} конфет, '
                                               f'и на столе осталось {total} конфет.')
             if model.check_win(total): 
-                await bot.send_message(player.id, f'Победил {player.first_name}')
+                await bot.send_message(player.id, f'Победил {player.first_name}.')
                 return
             model.set_total_candies(total)
             await enemy_turn(player)
@@ -49,10 +49,10 @@ async def enemy_turn(player):
     if total_count < count + 1:
         enemy_take = total_count
     else:
-        if level == 1:
+        if level == 0:
             enemy_take = random.randint(1,count)
-        elif level == 2:    
-            enemy_take = (total_count - 1) % 28
+        elif level == 1:    
+            enemy_take = (total_count - 1) % (count + 1)
     total = total_count - enemy_take
     await bot.send_message(player.id, f'Бот взял {enemy_take} конфет, '
                                       f'и на столе осталось {total} конфет.')
