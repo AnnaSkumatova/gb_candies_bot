@@ -10,20 +10,21 @@ async def start(message: types.Message):
     player = message.from_user
     model.set_player(player)
     await view.hello(message)
-    await asyncio.sleep(3)
+    await asyncio.sleep(10)
     dp.register_message_handler(player_turn)
     first_turn = random.randint(0,1)    
     if first_turn:
         await await_player(player)
     else:
         await enemy_turn(player)
-     
+
 
 async def player_turn(message: types.Message):
     player = message.from_user
-    model.set_player_id(player)
+    model.set_player(player)
+    count = model.get_max_take()
     if (message.text).isdigit():
-        if 0 < int(message.text) < 29:
+        if 0 < int(message.text) < count + 1:
             total_count = model.get_total_candies()
             player_take = int(message.text)
             total = total_count - player_take
@@ -85,10 +86,13 @@ async def set_max_take(message: types.Message):
     await bot.send_message(message.from_user.id, f'Количество конфет за один ход изменили на'
                                                  f' {count}')
 
+
 async def set_level(message: types.Message):
 
     count = int((message.text).split(" ")[1])
     model.set_level(count)
     await bot.send_message(message.from_user.id, f'Уровень игры выбран:'
                                                  f' {count}')
-    return                                             
+    return  
+    
+                                           
